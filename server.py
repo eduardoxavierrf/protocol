@@ -14,16 +14,27 @@ while True:
     request = request.decode("utf-8")
     request = request.split('|')
     if (request[0] == 'professor'):
-        grades[request[1]] = request[2]
+        if request[2] == 'baixar trabalho':
+            file = open('trabalho_' + request[1] + '.pdf', 'rb')
+            file_bytes = file.read(1024)
+
+            while file_bytes:
+                connectionSocket.send(file_bytes)
+                file_bytes = file.read(1024)
+            file.close()
+        elif request[2] == 'enviar nota':
+            grades[request[1]] = request[3]
+
     elif (request[0] == 'aluno'):
         if request[2] == 'send file':
-            f = open('server_file' + '.pdf','wb')
+            f = open('trabalho_' + request[1] + '.pdf','wb')
             file_bytes = connectionSocket.recv(1024)
             while file_bytes:
                 f.write(file_bytes)
                 file_bytes = connectionSocket.recv(1024)
             f.close()
-        else:
+            
+        elif request[2] == 'consultar nota':
             if grades.get(request[1]) == None:
                 connectionSocket.send('Sem nota disponivel'.encode())
             else:
