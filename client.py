@@ -1,5 +1,5 @@
+from math import ceil
 from socket import *
-from urllib import request
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect(('localhost', 8080))
@@ -14,9 +14,20 @@ if (role == 'professor'):
     print('A nota foi enviada com sucesso')
     clientSocket.close()
 elif (role == 'aluno'):
-    studentName = input('Digite o seu nome: ')
-    request = role + '|' + studentName + '|' + ''
-    clientSocket.send(request.encode())
-    modifiedSentence = clientSocket.recv(1024)
-    print('Nota: ', modifiedSentence)
+    file = open('trabalho/boa.pdf', 'rb')
+    size = len(file.read()) // 1024 + 1
+
+    # clientSocket.send(str(size).encode())
+    file.seek(0)
+    file_bytes = file.read(1024)
+
+    while file_bytes:
+        clientSocket.send(file_bytes)
+        file_bytes = file.read(1024)
+
+    # studentName = input('Digite o seu nome: ')
+    # request = role + '|' + studentName + '|' + ''
+    # clientSocket.send(request.encode())
+    # modifiedSentence = clientSocket.recv(1024)
+    # print('Nota: ', modifiedSentence)
     clientSocket.close()
