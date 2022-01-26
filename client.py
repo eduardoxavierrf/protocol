@@ -14,20 +14,28 @@ if (role == 'professor'):
     print('A nota foi enviada com sucesso')
     clientSocket.close()
 elif (role == 'aluno'):
-    file = open('trabalho/boa.pdf', 'rb')
-    size = len(file.read()) // 1024 + 1
+    studentName = input('Digite o seu nome: ')
 
-    # clientSocket.send(str(size).encode())
-    file.seek(0)
-    file_bytes = file.read(1024)
+    wantTo = input(studentName + ' o que você quer fazer?<consultar nota/enviar trabalho> ')
 
-    while file_bytes:
-        clientSocket.send(file_bytes)
+    if wantTo == 'consultar nota':
+        request = role + '|' + studentName + '|' + ''
+        clientSocket.send(request.encode())
+        grade = clientSocket.recv(1024)
+        print('Nota: ', grade)
+    elif wantTo == 'enviar trabalho':
+        request = role + '|' + studentName + '|' + 'send file'
+        clientSocket.send(request.encode())
+        file = open('trabalho/boa.pdf', 'rb')
+        
         file_bytes = file.read(1024)
 
-    # studentName = input('Digite o seu nome: ')
-    # request = role + '|' + studentName + '|' + ''
-    # clientSocket.send(request.encode())
-    # modifiedSentence = clientSocket.recv(1024)
-    # print('Nota: ', modifiedSentence)
+        while file_bytes:
+            clientSocket.send(file_bytes)
+            file_bytes = file.read(1024)
+        file.close()
+
+        print('Trabalho enviado')
+    
+    
     clientSocket.close()
