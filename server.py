@@ -1,7 +1,7 @@
 from socket import (AF_INET, SOCK_STREAM, socket)
 
 class Request:
-    def __init__(self, request):
+    def __init__(self, request: bytes) -> None:
         request = request.decode("utf-8")
         request = request.split('|')
         self.role = request[0]
